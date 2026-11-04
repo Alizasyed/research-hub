@@ -256,7 +256,9 @@ ICON.other = ICON.text;
 function apiUrl() { return (window.HUB_API || pref('api') || '').trim(); }
 async function run(fn) {
   var args = Array.prototype.slice.call(arguments, 1);
-  var r = await fetch(apiUrl(), { method: 'POST', body: JSON.stringify({ fn: fn, args: args, code: pref('code'), who: pref('who') }) });
+  var r;
+  try { r = await fetch(apiUrl(), { method: 'POST', body: JSON.stringify({ fn: fn, args: args, code: pref('code'), who: pref('who') }) }); }
+  catch (e) { throw new Error('Could not reach the Google script. Open ' + apiUrl() + ' in a new tab: it should say "Field Data Hub API is running". If it shows anything else, redeploy with Execute as Me and access Anyone.'); }
   if (!r.ok) throw new Error('The hub did not answer (' + r.status + ').');
   var j = await r.json();
   if (!j.ok) { if (j.error === 'WRONG_CODE') { signIn('That team code is not right.'); } throw new Error(j.error); }
