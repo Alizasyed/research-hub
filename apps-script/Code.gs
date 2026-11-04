@@ -48,14 +48,17 @@ function me_() {
 var API = ['getConfig', 'listSessions', 'createSession', 'updateSession', 'addFile', 'addTypedNotes', 'claim', 'setStatus',
   'enqueue', 'requestSummary', 'retryJob', 'cancelJob', 'processQueue', 'saveText', 'uploadUrl', 'ping'];
 
-function doGet() {
+function doGet(e) {
+  if (e && e.parameter && e.parameter.q) return handle_(e.parameter.q);
   return ContentService.createTextOutput('Field Data Hub API is running. Open the website to use it.');
 }
 
-function doPost(e) {
+function doPost(e) { return handle_(e.postData.contents); }
+
+function handle_(body) {
   var out;
   try {
-    var req = JSON.parse(e.postData.contents);
+    var req = JSON.parse(body);
     var code = PropertiesService.getScriptProperties().getProperty('TEAM_CODE');
     if (!code) throw new Error('Add a TEAM_CODE script property first (any word the team will type to sign in).');
     if (String(req.code || '').trim().toLowerCase() !== code.trim().toLowerCase()) throw new Error('WRONG_CODE');
