@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What I Would Share</title>
+<meta name="description" content="Card sort: which business information a shopkeeper would share, and with whom.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Figtree:wght@600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef; --surface:#ffffff; --ink:#1f2421; --muted:#5d655f; --line:#d9d6cd;
+  --brand:#1d6b52; --brand-soft:#e3f0ea;
+  --green:#2e9e5b; --red:#d83a34; --amber:#e9a23b; --amber-ink:#2b1d05;
+  --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.06);
+  --tok:76px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141715; --surface:#1d211f; --ink:#ecefe9; --muted:#a3aba5; --line:#343a36;
+  --brand:#5cc49a; --brand-soft:#1f3329; --shadow:0 1px 2px rgba(0,0,0,.4);
+}}
+:root[data-theme="dark"]{
+  --bg:#141715; --surface:#1d211f; --ink:#ecefe9; --muted:#a3aba5; --line:#343a36;
+  --brand:#5cc49a; --brand-soft:#1f3329; --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;-webkit-text-size-adjust:100%}
+.ur{font-family:'Noto Nastaliq Urdu',serif;direction:rtl;line-height:2}
+button{font:inherit;color:inherit}
+svg{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.bar-in{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+h1{font-family:Figtree;font-weight:800;font-size:20px;margin:0;color:var(--brand);white-space:nowrap}
+.pid{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.pid input{width:110px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.spacer{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;font-size:14px;font-weight:600}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:8px 10px;font-size:13px;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.progress{font-size:13px;color:var(--muted)}
+
+/* tray */
+.tray{position:sticky;top:var(--barh,58px);z-index:15;background:var(--bg);border-bottom:1px solid var(--line)}
+.tray .tok{width:86px;height:86px;overflow:hidden}
+.tray-in{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin}
+.tray-label{font-size:12px;color:var(--muted);align-self:center;white-space:nowrap;padding-right:4px}
+.hint{max-width:1200px;margin:0 auto;padding:0 16px 8px;font-size:13px;color:var(--muted)}
+
+/* tokens */
+.tok{width:var(--tok);height:var(--tok);flex:none;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:0 1px 3px rgba(0,0,0,.18);position:relative}
+.tok .en{font-family:Figtree;font-weight:700;font-size:11px;line-height:1.1}
+.tok .ur{font-size:10px;line-height:1.8}
+.tok.g{background:var(--green);color:#fff}
+.tok.r{background:var(--red);color:#fff}
+.tok.a{background:var(--amber);color:var(--amber-ink)}
+.tok.a .en{font-size:10px}
+.tok.selected{outline:3px solid var(--ink);outline-offset:2px}
+.tok.ghost{position:fixed;z-index:100;pointer-events:none;opacity:.92;transform:translate(-50%,-50%) scale(1.06);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+body.lang-en .tok .ur, body.lang-en .ur-only{display:none}
+body.lang-ur .tok .en, body.lang-ur .en-only{display:none}
+body.lang-ur .tok .ur{font-size:12px}
+
+/* cards */
+main{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.card-h .ic{color:var(--brand);font-size:26px;display:block;margin-bottom:4px}
+.card-h .t{font-family:Figtree;font-weight:700;font-size:19px;line-height:1.2}
+.card-h .ur{font-size:16px;text-align:right;max-width:55%}
+.slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.slot{border:1.5px dashed var(--brand);border-radius:8px;min-height:calc(var(--tok) + 46px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:5px 3px 4px;text-align:center;transition:background .12s}
+.slot .drop{width:var(--tok);height:var(--tok);max-width:100%;display:flex;align-items:center;justify-content:center}
+.slot .lab{font-size:11px;font-weight:600;line-height:1.15;color:var(--muted)}
+.slot .lab .ur{font-size:10px;line-height:1.7}
+.slot.over{background:var(--brand-soft);border-style:solid}
+.slot.filled{border-style:solid}
+.slot.target{background:var(--brand-soft)}
+.slot .tok{width:100%;max-width:var(--tok);aspect-ratio:1;height:auto;overflow:hidden}
+
+@media (max-width:640px){
+  :root{--tok:62px}
+  .bar{position:static}
+  .tray{top:0}
+  .bar-in{gap:8px;padding:8px 12px}
+  h1{font-size:17px;width:100%}
+  .pid span{display:none}
+  .btn .bl{display:none}
+  .btn{padding:7px 9px}
+  .seg button{padding:7px 8px}
+  .tray .tok{width:78px;height:78px}
+  .tray .tok.a .ur{font-size:8.5px;line-height:1.6}
+  .hint{font-size:12px}
+  main{padding:12px}
+  .card{padding:10px}
+  .slot{padding:4px 2px 3px}
+  .slot .lab{font-size:9px}
+  .slot .lab .ur{font-size:8.5px}
+  .slot .tok .en{font-size:8.5px}
+  .slot .tok .ur{font-size:7.5px;line-height:1.6}
+  .slot .tok.a .ur{display:none}
+  .tok .en{font-size:10px}.tok.a .en{font-size:9px}
+  .slot .lab{font-size:10px}
+  .card-h .t{font-size:17px}
+  .slots{gap:4px}
+}
+@media print{.bar,.tray,.hint{display:none}main{display:block}.card{break-inside:avoid;margin-bottom:10px;box-shadow:none}}
+
+/* summary dialog */
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);max-width:min(900px,calc(100vw - 32px));width:100%;padding:0}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg-h{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.dlg-h h2{font-family:Figtree;margin:0;font-size:18px}
+.dlg-b{padding:12px 16px;overflow:auto;max-height:70vh}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{font-family:Figtree;background:var(--brand-soft)}
+.pill{display:inline-block;padding:2px 6px;border-radius:4px;font-size:12px;font-weight:600}
+.pill.g{background:var(--green);color:#fff}.pill.r{background:var(--red);color:#fff}.pill.a{background:var(--amber);color:var(--amber-ink)}
+.dlg-f{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body class="lang-both">
+<div class="bar" id="bar"><div class="bar-in">
+  <h1>What I would share</h1>
+  <label class="pid"><span>Participant</span> <input id="pid" placeholder="e.g. M-01" autocomplete="off"></label>
+  <span class="progress" id="progress"></span>
+  <span class="spacer"></span>
+  <div class="seg" role="group" aria-label="Language">
+    <button data-lang="en">English</button><button data-lang="both" aria-pressed="true">Both</button><button data-lang="ur">اردو</button>
+  </div>
+  <button class="btn" id="undo" title="Undo"><svg class="lucide lucide-undo-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M9 14 4 9l5-5" /> <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11" /> </svg> <span class="bl">Undo</span></button>
+  <button class="btn" id="reset" title="Start again"><svg class="lucide lucide-rotate-ccw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> </svg> <span class="bl">Reset</span></button>
+  <button class="btn primary" id="done"><svg class="lucide lucide-download" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <polyline points="7 10 12 15 17 10" /> <line x1="12" x2="12" y1="15" y2="3" /> </svg> Results</button>
+</div></div>
+
+<div class="tray" id="tray"><div class="tray-in" id="trayIn"></div></div>
+<p class="hint"><span class="en-only">Drag a token onto a box, or tap a token and then tap a box. Tap a placed token to remove it.</span> <span class="ur ur-only">ٹوکن کو خانے پر گھسیٹیں، یا ٹوکن پر ٹیپ کر کے خانے پر ٹیپ کریں۔</span></p>
+
+<main id="cards"></main>
+
+<dialog id="dlg">
+  <div class="dlg-h"><h2>Results</h2><button class="btn" id="close" aria-label="Close"><svg class="lucide lucide-x" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 6 6 18" /> <path d="m6 6 12 12" /> </svg></button></div>
+  <div class="dlg-b" id="summary"></div>
+  <div class="dlg-f"><button class="btn" id="csv"><svg class="lucide lucide-download" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <polyline points="7 10 12 15 17 10" /> <line x1="12" x2="12" y1="15" y2="3" /> </svg> Download CSV</button></div>
+</dialog>
+
+<script>
+const CARDS=[
+ ["D1","id-card","CNIC and business name","شناختی کارڈ اور کاروبار کا نام"],
+ ["D2","chart-line","Daily sales total","روزانہ کی کل سیل"],
+ ["D3","qr-code","Wallet/QR transaction history","والٹ / QR لین دین کا ریکارڈ"],
+ ["D4","file-text","Bank account statement","بینک اکاؤنٹ اسٹیٹمنٹ"],
+ ["D5","shopping-cart","What I buy from my suppliers and how often","میں سپلائرز سے کیا اور کتنی بار خریدتا ہوں"],
+ ["D6","calendar-check","Whether I pay my suppliers on time","کیا میں سپلائرز کو وقت پر ادائیگی کرتا ہوں"],
+ ["D7","boxes","My stock levels","میرے اسٹاک کی مقدار"],
+ ["D8","database","My existing loans and repayments","میرے موجودہ قرضے اور ان کی واپسی"],
+ ["D9","zap","Utility bills (electricity, rent)","یوٹیلیٹی بل (بجلی، کرایہ)"],
+ ["D10","receipt","Tax return/NTN","ٹیکس ریٹرن / NTN"],
+ ["D11","camera","Photos of my shop","میری دکان کی تصاویر"],
+ ["D12","map-pin","Phone number and location","فون نمبر اور مقام"],
+ ["D13","house","Photos of my house","میرے گھر کی تصاویر"]];
+const WHO=[["Payment app","پیمنٹ ایپ"],["Distributor","ڈسٹری بیوٹر"],["Government","حکومت"],["Any bank offering a loan","قرض دینے والا کوئی بھی بینک"],["My primary bank","میرا اپنا بینک"]];
+const TOKENS=[
+ {id:"g",k:"g",en:"Would share",ur:"شیئر کروں گا"},
+ {id:"r",k:"r",en:"Would never share",ur:"کبھی شیئر نہیں کروں گا"},
+ {id:"c1",k:"a",en:"If it gets me a loan",ur:"اگر اس سے مجھے قرض ملے"},
+ {id:"c2",k:"a",en:"If only the bank sees it",ur:"اگر صرف بینک دیکھے"},
+ {id:"c3",k:"a",en:"If I am told each time it is used",ur:"اگر ہر بار استعمال پر مجھے بتایا جائے"},
+ {id:"c4",k:"a",en:"If I can stop sharing at any time",ur:"اگر میں جب چاہوں روک سکوں"},
+ {id:"c5",k:"a",en:"If it is not used for tax",ur:"اگر یہ ٹیکس کے لیے استعمال نہ ہو"},
+ {id:"c6",k:"a",en:"If someone I trust asks for it",ur:"اگر کوئی بھروسے والا مانگے"},
+ {id:"c7",k:"a",en:"If I get something back, like a lower rate",ur:"اگر بدلے میں کم شرح ملے"},
+ {id:"c8",k:"a",en:"If it is shared only once",ur:"اگر صرف ایک بار شیئر ہو"},
+ {id:"c9",k:"a",en:"If…",ur:"اگر…"}];
+const ICONS={"id-card": "<svg class=\"lucide lucide-id-card\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M16 10h2\" /> <path d=\"M16 14h2\" /> <path d=\"M6.17 15a3 3 0 0 1 5.66 0\" /> <circle cx=\"9\" cy=\"11\" r=\"2\" /> <rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\" /> </svg>", "chart-line": "<svg class=\"lucide lucide-chart-line\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M3 3v16a2 2 0 0 0 2 2h16\" /> <path d=\"m19 9-5 5-4-4-3 3\" /> </svg>", "qr-code": "<svg class=\"lucide lucide-qr-code\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <rect width=\"5\" height=\"5\" x=\"3\" y=\"3\" rx=\"1\" /> <rect width=\"5\" height=\"5\" x=\"16\" y=\"3\" rx=\"1\" /> <rect width=\"5\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\" /> <path d=\"M21 16h-3a2 2 0 0 0-2 2v3\" /> <path d=\"M21 21v.01\" /> <path d=\"M12 7v3a2 2 0 0 1-2 2H7\" /> <path d=\"M3 12h.01\" /> <path d=\"M12 3h.01\" /> <path d=\"M12 16v.01\" /> <path d=\"M16 12h1\" /> <path d=\"M21 12v.01\" /> <path d=\"M12 21v-1\" /> </svg>", "file-text": "<svg class=\"lucide lucide-file-text\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\" /> <path d=\"M14 2v4a2 2 0 0 0 2 2h4\" /> <path d=\"M10 9H8\" /> <path d=\"M16 13H8\" /> <path d=\"M16 17H8\" /> </svg>", "shopping-cart": "<svg class=\"lucide lucide-shopping-cart\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"8\" cy=\"21\" r=\"1\" /> <circle cx=\"19\" cy=\"21\" r=\"1\" /> <path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\" /> </svg>", "calendar-check": "<svg class=\"lucide lucide-calendar-check\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M8 2v4\" /> <path d=\"M16 2v4\" /> <rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\" /> <path d=\"M3 10h18\" /> <path d=\"m9 16 2 2 4-4\" /> </svg>", "boxes": "<svg class=\"lucide lucide-boxes\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z\" /> <path d=\"m7 16.5-4.74-2.85\" /> <path d=\"m7 16.5 5-3\" /> <path d=\"M7 16.5v5.17\" /> <path d=\"M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z\" /> <path d=\"m17 16.5-5-3\" /> <path d=\"m17 16.5 4.74-2.85\" /> <path d=\"M17 16.5v5.17\" /> <path d=\"M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z\" /> <path d=\"M12 8 7.26 5.15\" /> <path d=\"m12 8 4.74-2.85\" /> <path d=\"M12 13.5V8\" /> </svg>", "database": "<svg class=\"lucide lucide-database\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /> <path d=\"M3 5V19A9 3 0 0 0 21 19V5\" /> <path d=\"M3 12A9 3 0 0 0 21 12\" /> </svg>", "zap": "<svg class=\"lucide lucide-zap\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\" /> </svg>", "receipt": "<svg class=\"lucide lucide-receipt\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\" /> <path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\" /> <path d=\"M12 17.5v-11\" /> </svg>", "camera": "<svg class=\"lucide lucide-camera\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\" /> <circle cx=\"12\" cy=\"13\" r=\"3\" /> </svg>", "map-pin": "<svg class=\"lucide lucide-map-pin\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\" /> <circle cx=\"12\" cy=\"10\" r=\"3\" /> </svg>", "house": "<svg class=\"lucide lucide-house\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\" /> <path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\" /> </svg>", "undo-2": "<svg class=\"lucide lucide-undo-2\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M9 14 4 9l5-5\" /> <path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\" /> </svg>", "download": "<svg class=\"lucide lucide-download\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <polyline points=\"7 10 12 15 17 10\" /> <line x1=\"12\" x2=\"12\" y1=\"15\" y2=\"3\" /> </svg>", "rotate-ccw": "<svg class=\"lucide lucide-rotate-ccw\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\" /> <path d=\"M3 3v5h5\" /> </svg>", "x": "<svg class=\"lucide lucide-x\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M18 6 6 18\" /> <path d=\"m6 6 12 12\" /> </svg>"};
+const TK=Object.fromEntries(TOKENS.map(t=>[t.id,t]));
+const KEY="cs01-state-v1";
+let state={pid:"",placed:{},custom:{}}; // placed["D1|2"]="g"; custom["D1|2"]="text"
+let history=[];
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.placed)state=s}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function tokEl(id,custom){
+  const t=TK[id];const d=document.createElement("div");
+  d.className="tok "+t.k;d.dataset.tok=id;
+  const en=custom?"If "+custom:t.en;
+  d.innerHTML=`<span class="en">${esc(en)}</span><span class="ur">${custom?"":esc(t.ur)}</span>`;
+  d.title=en;return d;
+}
+// tray
+const trayIn=document.getElementById("trayIn");
+TOKENS.forEach(t=>trayIn.appendChild(tokEl(t.id)));
+// cards
+const cardsEl=document.getElementById("cards");
+CARDS.forEach(([code,ic,en,ur])=>{
+  const c=document.createElement("section");c.className="card";
+  c.innerHTML=`<div class="card-h"><div><span class="ic">${ICONS[ic]}</span><div class="t en-only">${esc(en)}</div></div><div class="ur ur-only">${esc(ur)}</div></div>
+  <div class="slots">${WHO.map((w,i)=>`<div class="slot" data-slot="${code}|${i}"><div class="drop"></div><div class="lab"><div class="en-only">${esc(w[0])}</div><div class="ur ur-only">${esc(w[1])}</div></div></div>`).join("")}</div>`;
+  cardsEl.appendChild(c);
+});
+function render(){
+  document.querySelectorAll(".slot").forEach(s=>{
+    const k=s.dataset.slot,v=state.placed[k],drop=s.querySelector(".drop");
+    drop.innerHTML="";s.classList.toggle("filled",!!v);
+    if(v){const e=tokEl(v,state.custom[k]);e.dataset.from=k;drop.appendChild(e)}
+  });
+  const n=Object.keys(state.placed).length,total=CARDS.length*WHO.length;
+  document.getElementById("progress").textContent=`${n} of ${total} placed`;
+  document.getElementById("pid").value=state.pid||"";
+}
+function place(k,id){
+  history.push(JSON.stringify(state));if(history.length>100)history.shift();
+  if(id===null){delete state.placed[k];delete state.custom[k]}
+  else{
+    state.placed[k]=id;delete state.custom[k];
+    if(id==="c9"){const t=prompt("If… (write the condition)","");if(t&&t.trim())state.custom[k]=t.trim().replace(/^if\s+/i,"")}
+  }
+  save();render();
+}
+// drag + tap
+let drag=null,selected=null;
+function clearSel(){if(selected){selected.el.classList.remove("selected");selected=null;document.querySelectorAll(".slot.target").forEach(s=>s.classList.remove("target"))}}
+document.addEventListener("pointerdown",e=>{
+  const t=e.target.closest(".tok");if(!t||t.classList.contains("ghost"))return;
+  e.preventDefault();
+  drag={id:t.dataset.tok,from:t.dataset.from||null,src:t,x:e.clientX,y:e.clientY,moved:false,ghost:null,pointer:e.pointerId};
+});
+document.addEventListener("pointermove",e=>{
+  if(!drag)return;
+  if(!drag.moved&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<6)return;
+  if(!drag.moved){drag.moved=true;clearSel();drag.ghost=tokEl(drag.id,drag.from?state.custom[drag.from]:null);drag.ghost.classList.add("ghost");document.body.appendChild(drag.ghost);if(drag.from)drag.src.style.opacity=.3}
+  drag.ghost.style.left=e.clientX+"px";drag.ghost.style.top=e.clientY+"px";
+  document.querySelectorAll(".slot.over").forEach(s=>s.classList.remove("over"));
+  const s=document.elementFromPoint(e.clientX,e.clientY)?.closest(".slot");if(s)s.classList.add("over");
+  // autoscroll near edges
+  const m=70;if(e.clientY>innerHeight-m)scrollBy(0,14);else if(e.clientY<m+(document.getElementById("tray").getBoundingClientRect().bottom))scrollBy(0,-14);
+});
+function endDrag(e){
+  if(!drag)return;const d=drag;drag=null;
+  document.querySelectorAll(".slot.over").forEach(s=>s.classList.remove("over"));
+  if(d.moved){
+    d.ghost.remove();
+    const s=document.elementFromPoint(e.clientX,e.clientY)?.closest(".slot");
+    if(s){const k=s.dataset.slot;if(k!==d.from){
+      const custom=d.from?state.custom[d.from]:null;
+      history.push(JSON.stringify(state));
+      if(d.from){delete state.placed[d.from];delete state.custom[d.from]}
+      state.placed[k]=d.id;delete state.custom[k];
+      if(custom)state.custom[k]=custom;
+      else if(d.id==="c9"){const t=prompt("If… (write the condition)","");if(t&&t.trim())state.custom[k]=t.trim().replace(/^if\s+/i,"")}
+      save();render();
+    }else render()}
+    else if(d.from){place(d.from,null)} // dragged off a card = remove
+    else render();
+    return;
+  }
+  // tap
+  if(d.from){place(d.from,null);return}
+  if(selected&&selected.id===d.id){clearSel();return}
+  clearSel();selected={id:d.id,el:d.src};d.src.classList.add("selected");
+  document.querySelectorAll(".slot").forEach(s=>s.classList.add("target"));
+}
+document.addEventListener("pointerup",endDrag);
+document.addEventListener("pointercancel",e=>{if(drag){drag.ghost&&drag.ghost.remove();drag=null;render()}});
+document.addEventListener("click",e=>{
+  if(!selected)return;
+  const s=e.target.closest(".slot");
+  if(s&&!e.target.closest(".tok")){place(s.dataset.slot,selected.id);clearSel()}
+  else if(!e.target.closest(".tok"))clearSel();
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")clearSel()});
+// controls
+document.getElementById("pid").addEventListener("input",e=>{state.pid=e.target.value;save()});
+document.getElementById("undo").onclick=()=>{const h=history.pop();if(h){state=JSON.parse(h);save();render()}};
+document.getElementById("reset").onclick=()=>{if(confirm("Clear all tokens and start a new participant?")){history.push(JSON.stringify(state));state={pid:"",placed:{},custom:{}};save();render()}};
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  document.body.className="lang-"+b.dataset.lang;try{localStorage.setItem("cs01-lang",b.dataset.lang)}catch(e){}
+});
+try{const l=localStorage.getItem("cs01-lang");if(l)document.querySelector(`.seg button[data-lang="${l}"]`)?.click()}catch(e){}
+function label(k){const v=state.placed[k];if(!v)return"";const t=TK[v];return state.custom[k]?"Would share if: "+state.custom[k]:(t.k==="a"?"Would share if: "+t.en.replace(/^If\s+/,""):t.en)}
+const dlg=document.getElementById("dlg");
+document.getElementById("done").onclick=()=>{
+  let h=`<p style="margin:0 0 8px;color:var(--muted);font-size:13px">Participant: <b>${esc(state.pid||"not set")}</b></p><table><tr><th>Information</th>${WHO.map(w=>`<th>${esc(w[0])}</th>`).join("")}</tr>`;
+  CARDS.forEach(([code,,en])=>{h+=`<tr><td>${esc(en)}</td>${WHO.map((w,i)=>{const k=code+"|"+i,v=state.placed[k];return`<td>${v?`<span class="pill ${TK[v].k}">${esc(label(k).replace("Would share if: ","If "))}</span>`:""}</td>`}).join("")}</tr>`});
+  document.getElementById("summary").innerHTML=h+"</table>";dlg.showModal();
+};
+document.getElementById("close").onclick=()=>dlg.close();
+document.getElementById("csv").onclick=()=>{
+  const rows=[["participant","card","information","institution","answer"]];
+  CARDS.forEach(([code,,en])=>WHO.forEach((w,i)=>{const k=code+"|"+i;rows.push([state.pid,code,en,w[0],label(k)])}));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+csv],{type:"text/csv"}));
+  a.download=`card-sort-${(state.pid||"participant").replace(/[^\w-]/g,"")}.csv`;a.click();
+};
+const setBarH=()=>document.documentElement.style.setProperty("--barh",(innerWidth>640?document.getElementById("bar").offsetHeight:0)+"px");
+addEventListener("resize",setBarH);setBarH();
+render();
+</script>
+</body>
+</html>
